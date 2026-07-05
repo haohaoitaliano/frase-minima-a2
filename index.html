@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>La frase minima</title>
+    <style>
+      :root {
+        --bg: #fff8ef;
+        --surface: #ffffff;
+        --ink: #25211c;
+        --muted: #665f57;
+        --line: #eadfce;
+        --subject: #2563eb;
+        --direct: #17803d;
+        --indirect: #d97706;
+        --verb: #dc2626;
+        --ok: #147a3f;
+        --bad: #b42318;
+        --shadow: 0 10px 28px rgba(72, 52, 27, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-width: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 260px),
+          var(--bg);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+        line-height: 1.55;
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      .page {
+        width: min(100%, 980px);
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+      }
+
+      .hero {
+        padding: 14px 0 18px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+        font-size: clamp(2.15rem, 9vw, 4.4rem);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        max-width: 760px;
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: clamp(1.02rem, 3vw, 1.35rem);
+      }
+
+      .zh-note {
+        margin-bottom: 0;
+        color: #4c4036;
+        font-size: 1rem;
+      }
+
+      .part-title {
+        margin: 18px 0 14px;
+        font-size: clamp(1.45rem, 5vw, 2rem);
+      }
+
+      .rule-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .rule-card {
+        border: 1px solid var(--line);
+        border-left: 6px solid currentColor;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.74);
+        padding: 16px;
+      }
+
+      .rule-card.subject {
+        color: var(--subject);
+      }
+
+      .rule-card.direct {
+        color: var(--direct);
+      }
+
+      .rule-card.indirect {
+        color: var(--indirect);
+      }
+
+      .rule-card.minimum {
+        color: #7c3aed;
+      }
+
+      .rule-card h3 {
+        margin-bottom: 8px;
+        color: var(--ink);
+        font-size: 1.14rem;
+      }
+
+      .rule-card p,
+      .rule-card ul {
+        color: var(--muted);
+      }
+
+      .rule-card p {
+        margin-bottom: 8px;
+      }
+
+      .zh-line {
+        color: #4f463d;
+        font-size: 0.95rem;
+        line-height: 1.65;
+      }
+
+      .rule-card ul {
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 18px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        padding: 4px 11px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .chip::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        margin-right: 7px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .chip.subject {
+        color: var(--subject);
+      }
+
+      .chip.direct {
+        color: var(--direct);
+      }
+
+      .chip.indirect {
+        color: var(--indirect);
+      }
+
+      .chip.verb {
+        color: var(--verb);
+      }
+
+      .exercise-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .card-head {
+        padding: 16px 16px 10px;
+      }
+
+      .number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin-bottom: 12px;
+        border-radius: 50%;
+        background: #f0e3d0;
+        color: #513a20;
+        font-weight: 700;
+      }
+
+      .sentence {
+        margin-bottom: 0;
+        font-size: clamp(1.4rem, 6vw, 2.25rem);
+        font-weight: 750;
+        line-height: 1.18;
+      }
+
+      .answers {
+        display: grid;
+        gap: 12px;
+        padding: 0 16px 16px;
+      }
+
+      .field {
+        min-width: 0;
+      }
+
+      .field label {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        margin-bottom: 6px;
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .field label small {
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 500;
+      }
+
+      .field select {
+        width: 100%;
+        min-height: 48px;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 8px 12px;
+        color: var(--ink);
+      }
+
+      .field select:focus {
+        border-color: currentColor;
+        outline: 3px solid rgba(37, 99, 235, 0.14);
+      }
+
+      .field.subject {
+        color: var(--subject);
+      }
+
+      .field.direct {
+        color: var(--direct);
+      }
+
+      .field.indirect {
+        color: var(--indirect);
+      }
+
+      .feedback {
+        min-height: 24px;
+        margin: 6px 0 0;
+        font-size: 0.94rem;
+        font-weight: 700;
+      }
+
+      .feedback.correct {
+        color: var(--ok);
+      }
+
+      .feedback.wrong {
+        color: var(--bad);
+      }
+
+      .status {
+        min-height: 24px;
+        margin: 0;
+        color: var(--muted);
+        font-weight: 750;
+        text-align: center;
+      }
+
+      .status.success {
+        color: var(--ok);
+      }
+
+      .status.warning {
+        color: var(--bad);
+      }
+
+      .actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 5;
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 252, 247, 0.95);
+        padding: 12px;
+        box-shadow: 0 -6px 22px rgba(72, 52, 27, 0.08);
+        backdrop-filter: blur(10px);
+      }
+
+      .button-row {
+        display: grid;
+        gap: 10px;
+      }
+
+      .btn {
+        min-height: 52px;
+        border: 0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: #2f5d50;
+        color: #fff;
+      }
+
+      .btn.secondary {
+        border: 2px solid #2f5d50;
+        background: #fff;
+        color: #2f5d50;
+      }
+
+      .score {
+        margin: 0;
+        color: var(--ink);
+        font-size: 1.2rem;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .summary {
+        display: none;
+        margin-top: 18px;
+        border: 2px solid #2f5d50;
+        border-radius: 8px;
+        background: #f4fff9;
+        padding: 18px;
+      }
+
+      .summary.visible {
+        display: block;
+      }
+
+      .summary h2 {
+        margin-bottom: 10px;
+        font-size: 1.35rem;
+      }
+
+      .summary p {
+        margin-bottom: 10px;
+      }
+
+      .summary strong {
+        color: #1f4d42;
+      }
+
+      .part-two {
+        display: none;
+        margin-top: 24px;
+      }
+
+      .part-two.visible {
+        display: block;
+      }
+
+      .rule-prompt {
+        margin-top: 14px;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+      }
+
+      .rule-prompt:first-of-type {
+        margin-top: 0;
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .inline-select {
+        width: min(100%, 220px);
+        min-height: 44px;
+        margin: 4px 4px 0;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 6px 10px;
+        color: var(--ink);
+      }
+
+      .preposition-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+        padding-left: 0;
+        list-style: none;
+      }
+
+      .preposition-list li {
+        border-radius: 999px;
+        background: #fff2df;
+        padding: 4px 10px;
+        color: var(--indirect);
+        font-weight: 800;
+      }
+
+      @media (min-width: 720px) {
+        .page {
+          padding: 36px 24px 56px;
+        }
+
+        .answers {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .actions {
+          grid-template-columns: 1fr auto;
+          align-items: center;
+        }
+
+        .button-row {
+          grid-template-columns: auto auto;
+          order: 2;
+        }
+
+        .score {
+          order: 1;
+          text-align: left;
+        }
+
+        .status {
+          grid-column: 1 / -1;
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page" id="top">
+      <header class="hero">
+        <h1>La frase minima</h1>
+        <p class="subtitle">Prima fai l’esercizio, poi completa le regole.</p>
+        <p class="zh-note">先完成练习，然后补充并总结规则。</p>
+      </header>
+
+      <div class="legend" aria-label="Colori guida">
+        <span class="chip subject">Soggetto</span>
+        <span class="chip direct">Oggetto diretto</span>
+        <span class="chip indirect">Oggetto indiretto</span>
+        <span class="chip verb">Verbo</span>
+      </div>
+
+      <section class="exercise-list" id="exerciseList" aria-label="Esercizi"></section>
+
+      <section class="actions" aria-label="Azioni">
+        <div class="button-row">
+          <button class="btn primary" type="button" id="checkButton">Controlla le risposte / 检查答案</button>
+          <button class="btn secondary" type="button" id="resetButton">Ricomincia / 重新开始</button>
+        </div>
+        <p class="score" id="score" aria-live="polite"></p>
+        <p class="status" id="exerciseStatus" aria-live="polite"></p>
+      </section>
+
+      <section class="part-two" id="partTwo" aria-live="polite">
+        <h2 class="part-title">Parte 2 – Completa la regola</h2>
+        <p class="status success">Perfetto! Hai riconosciuto tutti gli elementi della frase.</p>
+        <div class="rule-list" id="ruleList"></div>
+
+        <section class="actions" aria-label="Azioni regola">
+          <div class="button-row">
+            <button class="btn primary" type="button" id="checkRuleButton">Controlla la regola / 检查规则</button>
+          </div>
+          <p class="score" id="ruleScore" aria-live="polite"></p>
+        </section>
+
+        <section class="summary" id="ruleSummary" aria-live="polite">
+          <h2>Regola completa</h2>
+          <p><strong>Il soggetto indica chi compie l’azione.</strong></p>
+          <p>主语表示谁做这个动作。</p>
+          <p><strong>Il complemento oggetto diretto risponde alle domande “chi?” e “che cosa?” e normalmente non è introdotto da una preposizione.</strong></p>
+          <p>直接宾语回答“谁？”和“什么？”，前面通常没有介词。</p>
+          <p><strong>Il complemento oggetto indiretto risponde spesso alla domanda “a chi?” ed è normalmente introdotto da una preposizione.</strong></p>
+          <p>间接宾语经常回答“给谁？”，通常由介词引出。</p>
+          <p><strong>La frase minima contiene almeno un soggetto e un verbo.</strong></p>
+          <p>最基本的句子至少包含主语和动词。</p>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const exercises = [
+        {
+          sentence: "Voi venite?",
+          options: ["voi", "venite", "non c’è"],
+          answers: { subject: "voi", direct: "non c’è", indirect: "non c’è" }
+        },
+        {
+          sentence: "Mangiano un panino.",
+          options: ["loro（soggetto sottinteso）", "mangiano", "un panino", "non c’è"],
+          answers: { subject: "loro（soggetto sottinteso）", direct: "un panino", indirect: "non c’è" }
+        },
+        {
+          sentence: "Anna sta dormendo.",
+          options: ["Anna", "sta dormendo", "non c’è"],
+          answers: { subject: "Anna", direct: "non c’è", indirect: "non c’è" }
+        },
+        {
+          sentence: "Mario ha cucinato la pasta.",
+          options: ["Mario", "ha cucinato", "la pasta", "non c’è"],
+          answers: { subject: "Mario", direct: "la pasta", indirect: "non c’è" }
+        },
+        {
+          sentence: "Giulio ha comprato un fiore a Mara.",
+          options: ["Giulio", "ha comprato", "un fiore", "a Mara", "non c’è"],
+          answers: { subject: "Giulio", direct: "un fiore", indirect: "a Mara" }
+        },
+        {
+          sentence: "Anna ha scritto una lettera a Giulia.",
+          options: ["Anna", "ha scritto", "una lettera", "a Giulia", "non c’è"],
+          answers: { subject: "Anna", direct: "una lettera", indirect: "a Giulia" }
+        },
+        {
+          sentence: "Io ho chiesto un’informazione alla polizia.",
+          options: ["io", "ho chiesto", "un’informazione", "alla polizia", "non c’è"],
+          answers: { subject: "io", direct: "un’informazione", indirect: "alla polizia" }
+        },
+        {
+          sentence: "Mario ha portato il pranzo alla moglie.",
+          options: ["Mario", "ha portato", "il pranzo", "alla moglie", "non c’è"],
+          answers: { subject: "Mario", direct: "il pranzo", indirect: "alla moglie" }
+        }
+      ];
+
+      const answerTypes = [
+        { key: "subject", label: "Soggetto", zh: "主语", className: "subject" },
+        { key: "direct", label: "Complemento oggetto diretto", zh: "直接宾语", className: "direct" },
+        { key: "indirect", label: "Complemento oggetto indiretto", zh: "间接宾语", className: "indirect" }
+      ];
+
+      const ruleSections = [
+        {
+          title: "Regola 1 – Il soggetto",
+          className: "subject",
+          prompts: [
+            {
+              it: "Il soggetto indica ____ compie l’azione.",
+              zh: "主语表示____做这个动作。",
+              options: ["chi", "che cosa", "a chi"],
+              zhOptions: ["谁", "什么", "给谁"],
+              answer: "chi",
+              zhAnswer: "谁"
+            },
+            {
+              it: "Per trovare il soggetto, prima bisogna trovare il ____.",
+              zh: "找主语时，可以先找到句子中的____。",
+              options: ["verbo", "complemento", "articolo"],
+              zhOptions: ["动词", "宾语", "冠词"],
+              answer: "verbo",
+              zhAnswer: "动词"
+            }
+          ]
+        },
+        {
+          title: "Regola 2 – Il complemento oggetto diretto",
+          className: "direct",
+          prompts: [
+            {
+              it: "Il complemento oggetto diretto risponde alle domande: ____? ____?",
+              zh: "直接宾语回答：____？____？",
+              options: ["chi", "che cosa", "a chi"],
+              zhOptions: ["谁", "什么", "给谁"],
+              answer: "chi",
+              zhAnswer: "谁"
+            },
+            {
+              it: "Il complemento oggetto diretto risponde anche alla domanda: ____?",
+              zh: "直接宾语还回答：____？",
+              options: ["che cosa", "a chi", "con chi"],
+              zhOptions: ["什么", "给谁", "和谁"],
+              answer: "che cosa",
+              zhAnswer: "什么"
+            },
+            {
+              it: "Il complemento oggetto diretto normalmente:",
+              zh: "直接宾语前面一般：",
+              options: ["è introdotto da una preposizione", "non è introdotto da una preposizione"],
+              zhOptions: ["有介词", "没有介词"],
+              answer: "non è introdotto da una preposizione",
+              zhAnswer: "没有介词"
+            }
+          ]
+        },
+        {
+          title: "Regola 3 – Il complemento oggetto indiretto",
+          className: "indirect",
+          prompts: [
+            {
+              it: "Il complemento oggetto indiretto risponde spesso alla domanda:",
+              zh: "间接宾语经常回答：",
+              options: ["chi?", "che cosa?", "a chi?"],
+              zhOptions: ["谁？", "什么？", "给谁？"],
+              answer: "a chi?",
+              zhAnswer: "给谁？"
+            },
+            {
+              it: "Il complemento oggetto indiretto è normalmente introdotto da una ____.",
+              zh: "间接宾语通常由____引出。",
+              options: ["preposizione", "articolo", "congiunzione"],
+              zhOptions: ["介词", "冠词", "连词"],
+              answer: "preposizione",
+              zhAnswer: "介词"
+            }
+          ],
+          note: "Esempi: a, al, alla, ai, alle"
+        },
+        {
+          title: "Regola 4 – La frase minima",
+          className: "minimum",
+          prompts: [
+            {
+              it: "La frase minima contiene almeno:",
+              zh: "最基本的句子至少包含：",
+              options: ["un soggetto e un verbo", "un soggetto e due complementi", "solo un verbo"],
+              zhOptions: ["主语和动词", "主语和两个宾语", "只有动词"],
+              answer: "un soggetto e un verbo",
+              zhAnswer: "主语和动词"
+            }
+          ]
+        }
+      ];
+
+      const exerciseList = document.querySelector("#exerciseList");
+      const score = document.querySelector("#score");
+      const exerciseStatus = document.querySelector("#exerciseStatus");
+      const partTwo = document.querySelector("#partTwo");
+      const ruleList = document.querySelector("#ruleList");
+      const ruleScore = document.querySelector("#ruleScore");
+      const ruleSummary = document.querySelector("#ruleSummary");
+      const checkButton = document.querySelector("#checkButton");
+      const resetButton = document.querySelector("#resetButton");
+      const checkRuleButton = document.querySelector("#checkRuleButton");
+
+      function makeId(questionIndex, answerKey) {
+        return `q${questionIndex + 1}-${answerKey}`;
+      }
+
+      function makeRuleId(sectionIndex, promptIndex, language) {
+        return `rule-${sectionIndex + 1}-${promptIndex + 1}-${language}`;
+      }
+
+      function renderExercises() {
+        exerciseList.innerHTML = exercises.map((exercise, questionIndex) => {
+          const fields = answerTypes.map((type) => {
+            const id = makeId(questionIndex, type.key);
+            const options = [
+              '<option value="">Scegli una risposta / 请选择</option>',
+              ...exercise.options.map((option) => `<option value="${option}">${option}</option>`)
+            ].join("");
+
+            return `
+              <div class="field ${type.className}">
+                <label for="${id}">
+                  <span>${type.label}</span>
+                  <small>${type.zh}</small>
+                </label>
+                <select id="${id}" data-question="${questionIndex}" data-answer-type="${type.key}">
+                  ${options}
+                </select>
+                <p class="feedback" id="${id}-feedback" aria-live="polite"></p>
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <article class="card">
+              <div class="card-head">
+                <span class="number">${questionIndex + 1}</span>
+                <p class="sentence">${exercise.sentence}</p>
+              </div>
+              <div class="answers">
+                ${fields}
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function checkAnswers() {
+        let correctCount = 0;
+
+        exercises.forEach((exercise, questionIndex) => {
+          answerTypes.forEach((type) => {
+            const select = document.querySelector(`#${makeId(questionIndex, type.key)}`);
+            const feedback = document.querySelector(`#${makeId(questionIndex, type.key)}-feedback`);
+            const correctAnswer = exercise.answers[type.key];
+
+            if (select.value === correctAnswer) {
+              correctCount += 1;
+              feedback.textContent = "✓ Corretto";
+              feedback.className = "feedback correct";
+            } else {
+              feedback.textContent = `✗ Risposta corretta: ${correctAnswer}`;
+              feedback.className = "feedback wrong";
+            }
+          });
+        });
+
+        score.textContent = `${correctCount}/24`;
+        if (correctCount === 24) {
+          exerciseStatus.textContent = "Perfetto! Hai riconosciuto tutti gli elementi della frase.";
+          exerciseStatus.className = "status success";
+          partTwo.classList.add("visible");
+          partTwo.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          exerciseStatus.textContent = "Non hai ancora risposto correttamente a tutte le domande. Correggi gli errori e riprova. 你还没有全部答对。请修改错误后再次提交。全部答对后，才能总结规则。";
+          exerciseStatus.className = "status warning";
+          partTwo.classList.remove("visible");
+          ruleSummary.classList.remove("visible");
+          ruleScore.textContent = "";
+        }
+      }
+
+      function resetExercise() {
+        document.querySelectorAll("select").forEach((select) => {
+          select.value = "";
+        });
+        document.querySelectorAll(".feedback").forEach((feedback) => {
+          feedback.textContent = "";
+          feedback.className = "feedback";
+        });
+        score.textContent = "";
+        exerciseStatus.textContent = "";
+        exerciseStatus.className = "status";
+        ruleScore.textContent = "";
+        partTwo.classList.remove("visible");
+        ruleSummary.classList.remove("visible");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function renderRuleSections() {
+        ruleList.innerHTML = ruleSections.map((section, sectionIndex) => {
+          const prompts = section.prompts.map((prompt, promptIndex) => {
+            const itId = makeRuleId(sectionIndex, promptIndex, "it");
+            const zhId = makeRuleId(sectionIndex, promptIndex, "zh");
+            const itOptions = [
+              '<option value="">Scegli / 请选择</option>',
+              ...prompt.options.map((option) => `<option value="${option}">${option}</option>`)
+            ].join("");
+            const zhOptions = [
+              '<option value="">Scegli / 请选择</option>',
+              ...prompt.zhOptions.map((option) => `<option value="${option}">${option}</option>`)
+            ].join("");
+
+            return `
+              <div class="rule-prompt">
+                <label for="${itId}">${prompt.it}</label>
+                <select class="inline-select" id="${itId}" data-rule-section="${sectionIndex}" data-rule-prompt="${promptIndex}" data-rule-language="it">
+                  ${itOptions}
+                </select>
+                <p class="feedback" id="${itId}-feedback" aria-live="polite"></p>
+                <label class="zh-line" for="${zhId}">${prompt.zh}</label>
+                <select class="inline-select" id="${zhId}" data-rule-section="${sectionIndex}" data-rule-prompt="${promptIndex}" data-rule-language="zh">
+                  ${zhOptions}
+                </select>
+                <p class="feedback" id="${zhId}-feedback" aria-live="polite"></p>
+              </div>
+            `;
+          }).join("");
+
+          const note = section.note
+            ? '<ul class="preposition-list"><li>a</li><li>al</li><li>alla</li><li>ai</li><li>alle</li></ul>'
+            : "";
+
+          return `
+            <article class="rule-card ${section.className}">
+              <h3>${section.title}</h3>
+              ${prompts}
+              ${note}
+            </article>
+          `;
+        }).join("");
+      }
+
+      function checkRules() {
+        let correctCount = 0;
+        let totalCount = 0;
+
+        ruleSections.forEach((section, sectionIndex) => {
+          section.prompts.forEach((prompt, promptIndex) => {
+            [
+              { language: "it", answer: prompt.answer },
+              { language: "zh", answer: prompt.zhAnswer }
+            ].forEach((item) => {
+              const id = makeRuleId(sectionIndex, promptIndex, item.language);
+              const select = document.querySelector(`#${id}`);
+              const feedback = document.querySelector(`#${id}-feedback`);
+              totalCount += 1;
+
+              if (select.value === item.answer) {
+                correctCount += 1;
+                feedback.textContent = "✓ Corretto";
+                feedback.className = "feedback correct";
+              } else {
+                feedback.textContent = `✗ Risposta corretta: ${item.answer}`;
+                feedback.className = "feedback wrong";
+              }
+            });
+          });
+        });
+
+        ruleScore.textContent = `${correctCount}/${totalCount}`;
+        ruleSummary.classList.toggle("visible", correctCount === totalCount);
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+        }
+      });
+
+      checkButton.addEventListener("click", checkAnswers);
+      resetButton.addEventListener("click", resetExercise);
+      checkRuleButton.addEventListener("click", checkRules);
+
+      renderExercises();
+      renderRuleSections();
+    </script>
+  </body>
+</html>
