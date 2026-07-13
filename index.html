@@ -505,8 +505,13 @@
           <p>直接宾语回答“谁？”和“什么？”，前面通常没有介词。</p>
           <p><strong>Il complemento oggetto indiretto risponde spesso alla domanda “a chi?” ed è normalmente introdotto da una preposizione.</strong></p>
           <p>间接宾语经常回答“给谁？”，通常由介词引出。</p>
-          <p><strong>La frase minima contiene almeno un soggetto e un verbo.</strong></p>
-          <p>最基本的句子至少包含主语和动词。</p>
+          <p><strong>La frase minima può essere formata anche da un solo verbo. Il soggetto può essere espresso oppure sottinteso.</strong></p>
+          <p>最基本的句子也可以只由一个动词构成。主语可以明确写出来，也可以省略并包含在动词变位中。</p>
+          <ul>
+            <li><code>Mangio.</code> → soggetto sottinteso: io</li>
+            <li><code>Dormiamo.</code> → soggetto sottinteso: noi</li>
+            <li><code>Piove.</code> → verbo impersonale</li>
+          </ul>
         </section>
       </section>
     </main>
@@ -642,12 +647,12 @@
           className: "minimum",
           prompts: [
             {
-              it: "La frase minima contiene almeno:",
-              zh: "最基本的句子至少包含：",
-              options: ["un soggetto e un verbo", "un soggetto e due complementi", "solo un verbo"],
-              zhOptions: ["主语和动词", "主语和两个宾语", "只有动词"],
-              answer: "un soggetto e un verbo",
-              zhAnswer: "主语和动词"
+              it: "Una frase minima può essere formata:",
+              zh: "最基本的句子可以由什么构成？",
+              options: ["anche da un solo verbo", "sempre da un soggetto espresso e due complementi", "solo da un nome"],
+              zhOptions: ["也可以只由一个动词构成", "必须有明确主语和两个宾语", "只能由一个名词构成"],
+              answer: "anche da un solo verbo",
+              zhAnswer: "也可以只由一个动词构成"
             }
           ]
         }
